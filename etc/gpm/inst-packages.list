@@ -1,0 +1,4 @@
+INSTPACKAGES=(
+    dialog-1.3-20190211
+    dialog-1.3-20190212
+)

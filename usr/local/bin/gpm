@@ -1,0 +1,94 @@
+#!/bin/bash
+PKGPATH="/home/pascal/gpm-fakeroot/etc/gpm"
+
+source "$PKGPATH"/mirror.list
+source "$PKGPATH"/inst-packages.list
+
+PKGNAME="GPM"
+PKGDESC="The Galaxy Package Manager written from scratch for the Galaxy Operating System"
+PKGVER="1.0"
+PKGDEPS=(curl tar bash xz)
+AUTHOR=(LinuxSquare Dragonmaster1936)
+LICENSE=(GPL3)
+
+function install() {
+if [ $# -ge 2 ]; then
+    for (( k=2; k<=$#; k++ )); do
+        pkg=$(cat "$PKGPATH"/packages.list | grep "${!k}")
+        if [ "$pkg" ]; then
+            for i in "${MIRROR[@]}"; do
+                url="$i/$BRANCH/$pkg.tar.gz"
+                if curl --output /dev/null --silent --fail -r 0-0 "$url"; then
+                    echo "Hello World"
+                    #pushd /var/cache/gpm/pkg
+                    #curl --silent -O "$url"
+                    #mkdir "$pkg"
+                    #tar -xzf "$pkg.tar.gz" -C $pkg
+                    #cd "$pkg"
+                    #    cp -r * /
+                    #cd ..
+                    #rm -rf "$pkg"
+                    #popd            
+                    break
+                else
+                    echo "[$PKGNAME]: $i returned 404 on request $pkg.tar.gz"
+                fi
+            done
+        else
+            echo "[$PKGNAME]: Package ${!k} not found."
+        fi
+    done
+        exit 0
+fi
+}
+
+function uninstall() {
+# File mit allen Pfaden und so mittels for-loop löschen
+pkg=$(cat "$PKGPATH"/packages.list | grep "$2")
+if [ "$pkg" ]; then
+    for i in "${MIRROR[@]}"; do
+        url="$i/$BRANCH/$pkg.tar.gz"
+        if curl --output /dev/null --silent --fail -r 0-0 "$url"; then
+            curl --silent -O "$url" # change to curl -O
+            tar -xzf "$pkg.tar.gz"
+            pushd "$pkg"
+            source software.list
+            for j in "${SOFTWARE[@]}"; do
+                rm -rf "$j" # change to rm -rf
+            done
+            popd
+            sed "s/$pkg//" "$PKGPATH"/inst-packages.list > "$PKGPATH"/inst-packages.list
+            rm -rf "$pkg"{,".tar.gz"}
+        else
+            echo "[$PKGNAME]: $i returned 404 on request $pkg.tar.gz"
+        fi
+    done
+else
+    echo "[$PKGNAME]: Package $2 not found."
+fi
+}
+
+function resolveDeps() {
+
+}
+
+function update() {
+    
+}
+
+if [ $EUID -ne 0 ]; then
+    echo "[$PKGNAME]: Only runnable as root"
+    exit 1
+else
+    case $1 in
+        "install")
+            install
+            ;;
+        "remove")
+            uninstall
+            ;;
+        "update")
+            # Checksum von lokaler Datei und Server-Datei überprüfen. Gleich? Keine Updates
+            ;;
+    esac
+fi

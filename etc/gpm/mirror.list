@@ -1,0 +1,9 @@
+# Available Branches are:
+# stable | unstable | testing
+# testing and unstable are not recommended for users, who don't know what they're doing.
+
+BRANCH="testing"
+MIRROR=(
+    http://192.168.200.73/galaxy-packages
+    http://192.168.200.159/galaxy-packages
+) 
