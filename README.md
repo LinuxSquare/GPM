@@ -13,6 +13,6 @@ git clone https://github.com/LinuxSquare/GPM
 
 Script is locatet at `usr/local/bin/`
 
-100% Open Source
-100% Bash
+100% Open Source,
+100% Bash,
 100% Love
