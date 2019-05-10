@@ -16,5 +16,3 @@ Script is locatet at `usr/local/bin/`
 100% Open Source,
 100% Bash,
 100% Love
-
-Hallo Simon
