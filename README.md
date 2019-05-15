@@ -16,6 +16,13 @@ Script is located at `usr/local/bin/`
 
 ## Installation
 
+Before installing, make sure following programs are installed on your system:
+
+* curl
+* tar
+* bash
+* xz
+
 Clone this repository as mentioned above.
 Navigate into the recently cloned repository and type
 
