@@ -4,6 +4,5 @@
 
 BRANCH="testing"
 MIRROR=(
-    http://192.168.200.73/galaxy-packages
-    http://192.168.200.159/galaxy-packages
+    
 ) 

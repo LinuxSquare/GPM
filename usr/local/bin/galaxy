@@ -1,15 +1,15 @@
 #!/bin/bash
-PKGPATH="/home/pascal/Documents/Programming/Bash/GPM/etc/gpm"
+PKGPATH="/etc/galaxy"
 
 source "$PKGPATH"/mirror.list
 source "$PKGPATH"/inst-packages.list
 
 PKGNAME="Galaxy"
 PKGDESC="The Galaxy Package Manager written from scratch for the Galaxy Operating System"
-PKGVER="1.0"
+PKGVER="1.1"
 PKGDEPS=(curl tar bash xz)
 AUTHOR=(LinuxSquare Dragonmaster1936)
-LICENSE=(GPL3)
+LICENSE=(unknown)
 
 # A Package Manager without an install function? Good Luck. :P
 
@@ -21,16 +21,16 @@ if [ $# -ge 2 ]; then
             for i in "${MIRROR[@]}"; do
                 url="$i/$BRANCH/$pkg.tar.gz"
                 if curl --output /dev/null --silent --fail -r 0-0 "$url"; then
-                    echo "Hello World"
-                    #pushd /var/cache/gpm/pkg
-                    #curl --silent -O "$url"
-                    #mkdir "$pkg"
-                    #tar -xzf "$pkg.tar.gz" -C $pkg
-                    #cd "$pkg"
-                    #    cp -r * /
-                    #cd ..
-                    #rm -rf "$pkg"
-                    #popd            
+                    pushd /var/cache/gpm/pkg
+                    curl --silent -O "$url"
+                    mkdir "$pkg"
+                    tar -xzf "$pkg.tar.gz" -C $pkg
+                    cd "$pkg"
+                        cp -r * /
+                    cd ..
+                    rm -rf "$pkg"
+                    popd
+                    echo "$pkg" >> "$PKGPATH"/packages.list       
                     break
                 else
                     echo "[$PKGNAME]: $i returned 404 on request $pkg.tar.gz"
@@ -54,12 +54,12 @@ if [ "$pkg" ]; then
     for i in "${MIRROR[@]}"; do
         url="$i/$BRANCH/$pkg.tar.gz"
         if curl --output /dev/null --silent --fail -r 0-0 "$url"; then
-            curl --silent -O "$url" # change to curl -O
+            curl --silent -O "$url"
             tar -xzf "$pkg.tar.gz"
             pushd "$pkg"
             source software.list
             for j in "${SOFTWARE[@]}"; do
-                rm -rf "$j" # change to rm -rf
+                rm -rf "$j"
             done
             popd
             sed "s/$pkg//" "$PKGPATH"/inst-packages.list > "$PKGPATH"/inst-packages.list
@@ -80,14 +80,21 @@ function resolveDeps() {
     echo ""
 }
 
-# Well, yea, update. Ofcourse
+# Well, yeah, update. Of course
 
 function update() {
     for i in "${MIRROR[@]}"; do
         url="$i/$BRANCH/remote.list"
         if curl --output /dev/null --silent --fail -r 0-0 "$url"; then
-            curl --silent -O "$url" # change to curl -O
-            
+            curl --silent -O "$url"
+            for p1 in "${INSTPACKAGES[@]}"; do
+                for p2 in "${REMOTE[@]}"; do
+                    if [ $p1 = $p2 ]; then
+                        echo "$p1 and $p2 are similar to each other" # Just a placeholder
+                    fi
+                done
+            done
+            break
         else
             echo "[$PKGNAME]: $i returned 404 on request remote.list"
         fi
