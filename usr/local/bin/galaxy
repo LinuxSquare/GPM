@@ -1,15 +1,17 @@
 #!/bin/bash
-PKGPATH="/home/pascal/gpm-fakeroot/etc/gpm"
+PKGPATH="/home/pascal/Documents/Programming/Bash/GPM/etc/gpm"
 
 source "$PKGPATH"/mirror.list
 source "$PKGPATH"/inst-packages.list
 
-PKGNAME="GPM"
+PKGNAME="Galaxy"
 PKGDESC="The Galaxy Package Manager written from scratch for the Galaxy Operating System"
 PKGVER="1.0"
 PKGDEPS=(curl tar bash xz)
 AUTHOR=(LinuxSquare Dragonmaster1936)
 LICENSE=(GPL3)
+
+# A Package Manager without an install function? Good Luck. :P
 
 function install() {
 if [ $# -ge 2 ]; then
@@ -42,8 +44,11 @@ if [ $# -ge 2 ]; then
 fi
 }
 
+# Uninstall Function
+# Missing Features:
+# Removing unused dependencies
+
 function uninstall() {
-# File mit allen Pfaden und so mittels for-loop löschen
 pkg=$(cat "$PKGPATH"/packages.list | grep "$2")
 if [ "$pkg" ]; then
     for i in "${MIRROR[@]}"; do
@@ -68,12 +73,25 @@ else
 fi
 }
 
-function resolveDeps() {
+# Function to install dependencies of software and their dependencies
+# Dependency-Seption! :O
 
+function resolveDeps() {
+    echo ""
 }
 
+# Well, yea, update. Ofcourse
+
 function update() {
-    
+    for i in "${MIRROR[@]}"; do
+        url="$i/$BRANCH/remote.list"
+        if curl --output /dev/null --silent --fail -r 0-0 "$url"; then
+            curl --silent -O "$url" # change to curl -O
+            
+        else
+            echo "[$PKGNAME]: $i returned 404 on request remote.list"
+        fi
+    done
 }
 
 if [ $EUID -ne 0 ]; then
@@ -88,7 +106,7 @@ else
             uninstall
             ;;
         "update")
-            # Checksum von lokaler Datei und Server-Datei überprüfen. Gleich? Keine Updates
+            update
             ;;
     esac
 fi
